@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player - {{ video_name if video_name else 'Video İzle' }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .video-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .video-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .video-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-info {
+            font-size: 1rem;
+            opacity: 0.8;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .video-counter {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .video-player-wrapper {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            margin-bottom: 2rem;
+            background: #000;
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 20px;
+            min-height: 300px;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .video-player-wrapper:hover .video-overlay {
+            opacity: 1;
+        }
+
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .playback-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 120px;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .control-btn.play {
+            background: linear-gradient(45deg, #00d2d3, #54a0ff);
+        }
+
+        .control-btn.pause {
+            background: linear-gradient(45deg, #ff9ff3, #f368e0);
+        }
+
+        .navigation-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: linear-gradient(45deg, #4834d4, #686de0);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 140px;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .nav-btn.prev {
+            background: linear-gradient(45deg, #3742fa, #2f3542);
+        }
+
+        .nav-btn.next {
+            background: linear-gradient(45deg, #2ed573, #1e90ff);
+        }
+
+        .nav-btn.refresh {
+            background: linear-gradient(45deg, #ffa726, #ff7043);
+        }
+
+        .nav-btn.save {
+            background: linear-gradient(45deg, #26de81, #20bf6b);
+            font-size: 1.1rem;
+            padding: 1.2rem 2rem;
+        }
+
+        .nav-btn.dashboard {
+            background: linear-gradient(45deg, #8e44ad, #9b59b6);
+        }
+
+        .progress-bar-container {
+            margin: 1.5rem 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .video-status {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .status-playing {
+            background: #26de81;
+        }
+
+        .status-paused {
+            background: #ff6b6b;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .emotion-display {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            text-align: center;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .emotion-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .emotion-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .flash-messages {
+            margin-bottom: 1rem;
+        }
+
+        .flash-message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+        }
+
+        .flash-success {
+            background: rgba(46, 204, 113, 0.8);
+        }
+
+        .flash-error {
+            background: rgba(231, 76, 60, 0.8);
+        }
+
+        .flash-info {
+            background: rgba(52, 152, 219, 0.8);
+        }
+
+        .flash-warning {
+            background: rgba(241, 196, 15, 0.8);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .video-container {
+                padding: 1rem;
+                margin: 1rem;
+            }
+
+            .video-title {
+                font-size: 1.5rem;
+            }
+
+            .video-info {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .playback-controls,
+            .navigation-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .control-btn,
+            .nav-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(102, 126, 234, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-size: 1.2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div>
+            <div class="loading" style="width: 40px; height: 40px; margin-bottom: 1rem;"></div>
+            <div>İşleniyor...</div>
+        </div>
+    </div>
+
+    <div class="video-container">
+        <!-- Flash mesajları -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="video-header">
+            <h1 class="video-title">🎬 Video Analiz Sistemi</h1>
+            <div class="video-info">
+                <span>📹 Video: {{ video_name if video_name else 'Bilinmeyen' }}</span>
+                {% if current_index is defined and total_videos is defined %}
+                    <span class="video-counter">{{ current_index }}/{{ total_videos }}</span>
+                {% endif %}
+                <span>📊 Analiz Durumu: Aktif</span>
+            </div>
+        </div>
+
+        {% if video_file %}
+        <div class="video-player-wrapper">
+            <video id="videoPlayer" controls preload="metadata">
+                <source src="{{ video_file }}" type="video/mp4">
+                <source src="{{ video_file }}" type="video/webm">
+                <source src="{{ video_file }}" type="video/ogg">
+                Tarayıcınız video etiketini desteklemiyor.
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="video-status" id="videoStatus">
+            <span class="status-indicator status-paused" id="statusIndicator"></span>
+            <span id="statusText">Video hazır - Oynatmak için tıklayın</span>
+        </div>
+
+        <div class="controls-section">
+            <div class="playback-controls">
+                <button class="control-btn play" onclick="kontrolEt('play')" id="playBtn">
+                    ▶️ Oynat
+                </button>
+                <button class="control-btn pause" onclick="kontrolEt('pause')" id="pauseBtn">
+                    ⏸️ Durdur
+                </button>
+            </div>
+
+            <div class="navigation-controls">
+    <form method="POST" action="{{ url_for('video_izle') }}">
+        <button type="submit" name="action" value="prev" class="nav-btn prev" id="prevBtn">
+            ⏮️ Önceki Video
+        </button>
+
+        <button type="submit" name="action" value="next" class="nav-btn next" id="nextBtn">
+            ⏭️ Sonraki Video
+        </button>
+
+        <button type="submit" name="action" value="refresh" class="nav-btn refresh" id="refreshBtn">
+            🔄 Videoları Yenile
+        </button>
+
+        <button type="submit" name="action" value="save" class="nav-btn save" id="saveBtn">
+            💾 Analizi Kaydet
+        </button>
+    </form>
+
+    <a href="{{ url_for('dashboard') }}" class="nav-btn dashboard" style="text-decoration: none;">
+        🏠 Ana Sayfa
+    </a>
+</div>
+
+        <div class="emotion-display">
+            <div class="emotion-title">🧠 Duygu Analizi</div>
+            <div class="emotion-icon" id="emotionIcon">😊</div>
+            <div id="emotionText">Analiz başlatılmayı bekliyor...</div>
+        </div>
+        {% else %}
+        <div class="video-status">
+            <span class="status-indicator status-paused"></span>
+            Video bulunamadı. Lütfen videoları yenileyin.
+        </div>
+        <div class="navigation-controls">
+            <form method="post" style="display: contents;">
+                <button type="submit" name="action" value="refresh" class="nav-btn refresh">
+                    🔄 Videoları Yenile
+                </button>
+            </form>
+            <a href="{{ url_for('dashboard') }}" class="nav-btn dashboard" style="text-decoration: none;">
+                🏠 Ana Sayfa
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const video = document.getElementById("videoPlayer");
+        const progressBar = document.getElementById("progressBar");
+        const statusIndicator = document.getElementById("statusIndicator");
+        const statusText = document.getElementById("statusText");
+        const emotionIcon = document.getElementById("emotionIcon");
+        const emotionText = document.getElementById("emotionText");
+        const loadingOverlay = document.getElementById("loadingOverlay");
+
+        // Duygu ikonları
+        const emotionIcons = {
+            'happy': '😊',
+            'sad': '😢',
+            'angry': '😠',
+            'surprised': '😲',
+            'neutral': '😐',
+            'fear': '😨',
+            'disgust': '🤢'
+        };
+
+        function kontrolEt(durum) {
+            if (!video) return;
+
+            if (durum === "play") {
+                video.play().then(() => {
+                    updateStatus('playing', 'Video oynatılıyor...');
+                    emotionText.textContent = 'Duygu analizi başlatıldı...';
+                }).catch(error => {
+                    console.error('Video oynatma hatası:', error);
+                    updateStatus('paused', 'Video oynatılamadı');
+                });
+            } else if (durum === "pause") {
+                video.pause();
+                updateStatus('paused', 'Video duraklatıldı');
+                emotionText.textContent = 'Analiz duraklatıldı';
+            }
+
+            // Sunucuya durum gönder
+            fetch("/video", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ durum: durum })
+            }).catch(error => {
+                console.error('Sunucu iletişim hatası:', error);
+            });
+        }
+
+        function updateStatus(status, text) {
+            if (statusText) statusText.textContent = text;
+            if (statusIndicator) statusIndicator.className = `status-indicator status-${status}`;
+        }
+
+        function showLoading() {
+            loadingOverlay.classList.add('show');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('show');
+        }
+
+        // Video olayları
+        if (video) {
+            video.addEventListener("play", function() {
+                updateStatus('playing', 'Video oynatılıyor - Duygu analizi aktif');
+            });
+
+            video.addEventListener("pause", function() {
+                updateStatus('paused', 'Video duraklatıldı');
+            });
+
+            video.addEventListener("ended", function() {
+                updateStatus('paused', 'Video tamamlandı');
+                emotionText.textContent = 'Video analizi tamamlandı';
+                
+                // Sunucuya "bitti" durumu gönder
+                fetch("/video", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ durum: "bitti" })
+                }).catch(error => {
+                    console.error('Hata:', error);
+                });
+            });
+
+            // Progress bar güncelleme
+            video.addEventListener("timeupdate", function() {
+                if (video.duration) {
+                    const progress = (video.currentTime / video.duration) * 100;
+                    progressBar.style.width = progress + "%";
+                }
+            });
+
+            // Sayfa yüklendiğinde
+            video.addEventListener("loadedmetadata", function() {
+                updateStatus('paused', 'Video yüklendi - Hazır');
+                hideLoading();
+            });
+
+            video.addEventListener("loadstart", function() {
+                updateStatus('paused', 'Video yükleniyor...');
+            });
+
+            // Hata durumu
+            video.addEventListener("error", function(e) {
+                console.error('Video hatası:', e);
+                updateStatus('paused', 'Video yüklenemedi - Hata oluştu');
+                hideLoading();
+            });
+        }
+
+        // Form gönderilirken loading göster
+        const navigationForm = document.getElementById('navigationForm');
+        if (navigationForm) {
+            navigationForm.addEventListener('submit', function(e) {
+                showLoading();
+                
+                // Button'u disable et ve loading göster
+                const submitButton = e.submitter;
+                if (submitButton) {
+                    const originalText = submitButton.innerHTML;
+                    submitButton.innerHTML = '<span class="loading"></span> İşleniyor...';
+                    submitButton.disabled = true;
+                }
+            });
+        }
+
+        // Flash mesajlarını otomatik gizle
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.transition = 'all 0.5s ease';
+                    message.style.opacity = '0';
+                    setTimeout(() => {
+                        message.remove();
+                    }, 500);
+                }, 5000);
+            });
+        });
+
+        // Rastgele duygu simülasyonu (demo amaçlı)
+        let emotionInterval;
+        if (video) {
+            emotionInterval = setInterval(() => {
+                if (!video.paused && !video.ended) {
+                    const emotions = Object.keys(emotionIcons);
+                    const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+                    emotionIcon.textContent = emotionIcons[randomEmotion];
+                    emotionText.textContent = `Tespit edilen duygu: ${randomEmotion}`;
+                }
+            }, 5000);
+        }
+
+        // Sayfa kapatılırken interval'ı temizle
+        window.addEventListener('beforeunload', function() {
+            if (emotionInterval) {
+                clearInterval(emotionInterval);
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (!video) return;
+            
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    if (video.paused) {
+                        kontrolEt('play');
+                    } else {
+                        kontrolEt('pause');
+                    }
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    document.getElementById('prevBtn')?.click();
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    document.getElementById('nextBtn')?.click();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

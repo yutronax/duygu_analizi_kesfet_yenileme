@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Önerilen Videolar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .video-box {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .filename {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #444;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .pagination a {
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+        }
+        .pagination a.disabled {
+            background-color: #ccc;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Önerilen Videolar</h1>
+    <div class="video-container">
+        {% for video in video_files %}
+        <div class="video-box">
+            <video controls>
+                <source src="{{ url_for('static', filename='downloaded_videos/' + video) }}">
+                Tarayıcınız video etiketini desteklemiyor.
+            </video>
+            <div class="filename">{{ video }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('onerilen_videolar', page=page-1) }}">⬅ Önceki</a>
+        {% else %}
+            <a class="disabled">⬅ Önceki</a>
+        {% endif %}
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('onerilen_videolar', page=page+1) }}">Sonraki ➡</a>
+        {% else %}
+            <a class="disabled">Sonraki ➡</a>
+        {% endif %}
+    </div>
+</body>
+</html>
