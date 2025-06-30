@@ -1,6 +1,6 @@
 import math
 from flask import Flask, flash, redirect, render_template, request, url_for, session
-import kullanıcıbilgileri, os, videocekme, duyguanalizi , pandas as pd, threading, etiketolusturma
+import kullanıcıbilgileri, os, videocekme, duyguanalizi as duyguanalizi, pandas as pd, threading, etiketolusturma
 
 app = Flask(__name__)
 
@@ -15,7 +15,7 @@ video_indirme = videocekme.VideoDownloader()
 etiket_indirme=etiketolusturma.EtiketOlusturma()
 app.secret_key = 'your-secret-key-here'  
 def videoları_içeri_aktar():
-    VIDEO_FOLDER = r"C:\Users\MONSTER\3D Objects\yazprojeler\assemble\flask_proje\venv\static\videos"
+    VIDEO_FOLDER = r"YUKLENEN_VİDEOLARIN_YOLU"
     VALID_EXTENSIONS = (".mp4", ".webm", ".mkv", ".m4v", ".mov", ".ogg")
     try:
         return sorted([f for f in os.listdir(VIDEO_FOLDER)
@@ -118,6 +118,8 @@ def cikis():
     flash("Başarıyla çıkış yaptınız.", 'success')
     return redirect(url_for('anasayfa'))
 
+from flask import render_template
+
 @app.route('/kullanici_bilgileri', methods=['GET'])
 def kullanici_bilgileri_goruntule():
     if 'user_id' not in session:
@@ -128,9 +130,10 @@ def kullanici_bilgileri_goruntule():
     bilgiler = kullanici_bilgileri.kullanıcı_bilgilerini_getir(isim)
     
     if bilgiler:
-        return f"ID: {bilgiler['id']}, İsim: {bilgiler['isim']}, Soyisim: {bilgiler['soyisim']}"
+        return render_template("profil.html", bilgiler=bilgiler)
     else:
-        return "Kullanıcı bulunamadı."
+        return render_template("404.html", message="Kullanıcı bulunamadı.")
+
 
 @app.route('/video', methods=['GET', 'POST'])
 def video_izle():
