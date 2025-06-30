@@ -95,7 +95,9 @@ Uygulama `http://localhost:5000` adresinde çalışacaktır.
 - Şifre tekrarı kontrolü
 - Kullanıcı oturumu yönetimi
 ### Çalışma Örnekleri
-![önerilen videolar](GİF/calısma_ornegi.gif)
+
+![önerilen videolar](GİF/calısma_ornegi.gif) 
+##
 ![videoları yenileme](GİF/calısma_ornegi_2.gif)
 
 
