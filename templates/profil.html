@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil Bilgileri</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .profile-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .profile-card h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .profile-info {
+            font-size: 18px;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-card">
+        <h2>Profil Bilgileri</h2>
+        <div class="profile-info">
+            <p><strong>ID:</strong> {{ bilgiler.id }}</p>
+            <p><strong>İsim:</strong> {{ bilgiler.isim }}</p>
+            <p><strong>Soyisim:</strong> {{ bilgiler.soyisim }}</p>
+        </div>
+    </div>
+</body>
+</html>
