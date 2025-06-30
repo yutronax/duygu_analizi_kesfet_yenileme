@@ -95,10 +95,10 @@ Uygulama `http://localhost:5000` adresinde çalışacaktır.
 - Şifre tekrarı kontrolü
 - Kullanıcı oturumu yönetimi
 ## Çalşma Örnekleri
-![arayüz](GİF/calısma_ornegi.gif)
-![önerilen videolar](GİF/calısma_ornegi.gif_1)
-![videoları yenileme](GİF/calısma_ornegi.gif_2)
-![videolar](GİF/calısma_ornegi.gif_3)
+![önerilen videolar](GİF/calısma_ornegi.gif)
+![arayüz](GİF/calısma_ornegi_1.gif)
+![videoları yenileme](GİF/calısma_ornegi_2.gif)
+![videolar](GİF/calısma_ornegi_3.gif)
 
 
 ## Güvenlik Notları
