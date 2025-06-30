@@ -96,9 +96,9 @@ Uygulama `http://localhost:5000` adresinde çalışacaktır.
 - Kullanıcı oturumu yönetimi
 ### Çalışma Örnekleri
 ![önerilen videolar](GİF/calısma_ornegi.gif)
-
 ![arayüz](GİF/calısma_ornegi_1.gif)
 
+### diğerleri
 
 ![videoları yenileme](GİF/calısma_ornegi_2.gif)
 
