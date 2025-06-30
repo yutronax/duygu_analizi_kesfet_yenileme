@@ -12,10 +12,10 @@ class EtiketOlusturma:
 
     def __init__(self):
         
-        self.model = "tunedModels/video-tags-282"
-        self.youtube_api = "AIzaSyCK2OPH5gXKcIFUv5EzLLl7jn0DH5O5k5Q"
+       
+        self.youtube_api = "SENİN_YOUTUBE_APİ_ANAHTARI"
         self.tumvideloryuklendimi = False
-        self.api_key = "AIzaSyAzh8f5qptxoX-_SQ-a-kQ7pWBhW0vbwZM"
+        self.api_key = "SENİN_GEMİNİ_APİ_ANAHTARI"
         self.client = genai.Client(api_key=self.api_key)
         
 
@@ -49,7 +49,7 @@ Rules:
 
     def video_sum(self, video_url):
         try:
-            yol = r"C:\Users\MONSTER\3D Objects\yazprojeler\assemble\flask_proje\venv\static"
+            yol = r"VİDEO_YOLU\static"
             video_path = os.path.join(yol, video_url)
             
             # Check if file exists
@@ -183,7 +183,7 @@ Rules:
         
         try:
             videolar = pd.read_csv(r"video_data.csv")
-            alinacak_videolar = videolar[videolar['emotion'] != 'angry']['video_name'].tolist()
+            alinacak_videolar = videolar[videolar['emotion'] == 'happy']['video_name'].tolist()
         except Exception as e:
             print(f"CSV dosyası okunamadı: {e}")
             return
