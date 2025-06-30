@@ -94,6 +94,12 @@ Uygulama `http://localhost:5000` adresinde çalışacaktır.
 - SQLite veritabanı kullanılarak kullanıcı bilgileri saklanır
 - Şifre tekrarı kontrolü
 - Kullanıcı oturumu yönetimi
+## Çalşma Örnekleri
+![arayüz](GİF/calısma_ornegi.gif)
+![önerilen videolar](GİF/calısma_ornegi.gif_1)
+![videoları yenileme](GİF/calısma_ornegi.gif_2)
+![videolar](GİF/calısma_ornegi.gif_3)
+
 
 ## Güvenlik Notları
 
