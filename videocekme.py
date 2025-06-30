@@ -24,7 +24,7 @@ class VideoDownloader:
         self.video_list = []  # Bulduğumuz videoların linklerini burada saklayacağız
         
         # Videoları nereye kaydedeceğimizi belirliyoruz
-        self.kayit_klasoru = r"C:\Users\MONSTER\3D Objects\yazprojeler\assemble\flask_proje\venv\static\videos"
+        self.kayit_klasoru = r"YUKLENECEK_VİDEOLARIN_YOLU\static\videos"
         
         # İlerleme takibi için - kullanıcıya "ne kadar bitti" diye göstermek için
         self.progress = 0
