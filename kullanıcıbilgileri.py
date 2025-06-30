@@ -2,7 +2,7 @@ import sqlite3
 
 class KullanıcıBilgileri:
     def __init__(self):
-        self.sql = sqlite3.connect(r"C:\Users\MONSTER\kullanicibilgileri.db")
+        self.sql = sqlite3.connect(r"DATABASE_YOLU\kullanicibilgileri.db")
         self.sql.execute("""
             CREATE TABLE IF NOT EXISTS kullanıcıbilgileri (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,7 +43,7 @@ class KullanıcıBilgileri:
 
 class KullanıcıIlgiAlani:
     def __init__(self):
-        self.sql = sqlite3.connect(r"C:\Users\MONSTER\kullanicibilgileri.db")
+        self.sql = sqlite3.connect(r"DATABASE_YOLU\kullanicibilgileri.db")
         self.calistir = self.sql.cursor()
 
     def kullanıcının_ilgi_alanları_ekle(self, kullanıcı_id, alan):
