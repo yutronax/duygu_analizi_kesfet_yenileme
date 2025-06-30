@@ -63,7 +63,7 @@ class Duygu:
         """Analizi arka planda sürekli çalıştırmak için ayrı bir thread başlatıyoruz"""
         self.thread = threading.Thread(target=self._run, daemon=True)
         self.thread.start()
-        print("🔄 Duygu analiz thread'i başlatıldı.")
+        print(" Duygu analiz thread'i başlatıldı.")
     
     def _detect_faces(self, frame):
         """
@@ -124,7 +124,7 @@ class Duygu:
             return dominant_emotion, confidence_score
             
         except Exception as e:
-            print(f"❌ Duygu analizi hatası: {e}")
+            print(f"Duygu analizi hatası: {e}")
             return None, 0
     
     def _process_frame(self, frame):
@@ -141,7 +141,7 @@ class Duygu:
             print("👻 Yüz tespit edilemedi.")
             return
         
-        print(f"👤 {len(faces)} yüz tespit edildi.")
+        print(f" {len(faces)} yüz tespit edildi.")
         
         # En büyük yüzü seçiyoruz (muhtemelen en önemlisi o)
         largest_face = max(faces, key=lambda face: face[2] * face[3])
