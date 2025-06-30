@@ -99,7 +99,7 @@ Uygulama `http://localhost:5000` adresinde çalışacaktır.
 ##
 ![kullanıcı bilgileri](GİF/calısma_ornegi_3.gif)
 ![önerilen videolar](GİF/calısma_ornegi.gif)
-![videoları yenileme](GİF/202506301752 (3).gif)
+
 ![videolar](GİF/202506301752.gif)
 
 
